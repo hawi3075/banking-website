@@ -1,26 +1,45 @@
-import React from 'react';
-import { Search, Bell } from 'lucide-react';
+import React, { useState } from 'react';
 
-export default function Header() {
+export default function Transfers({ balance, onTransfer }) {
+  const [amount, setAmount] = useState('');
+  const [account, setAccount] = useState('');
+  const [error, setError] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const val = parseFloat(amount);
+    if (val > balance) { setError("Insufficient Funds."); return; }
+    if (val <= 0) { setError("Invalid Amount."); return; }
+    onTransfer(val, account);
+    setAmount(''); setAccount('');
+    setError('');
+  };
+
   return (
-    <header className="h-24 bg-white border-b-4 border-slate-100 flex items-center justify-between px-10 shadow-sm z-20">
-      <h1 className="text-slate-900 font-black text-2xl">Banking Control Center</h1>
-      <div className="flex items-center gap-6">
-        <div className="relative group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition" size={20} />
+    <div className="max-w-xl mx-auto bg-white p-10 rounded-[2.5rem] border-2 border-slate-100 shadow-2xl animate-in slide-in-from-bottom-10 duration-500">
+      <h2 className="text-3xl font-black text-slate-900 mb-8 text-center">Transfer Funds</h2>
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {error && <div className="p-4 bg-red-100 text-red-700 rounded-xl text-sm font-black border-2 border-red-200">{error}</div>}
+        <div className="space-y-3">
+          <label className="text-sm font-black text-slate-900 uppercase tracking-wider ml-1">Recipient Account Number</label>
           <input 
-            className="pl-12 pr-6 py-3 bg-slate-100 rounded-2xl outline-none text-sm w-64 focus:bg-white focus:ring-4 focus:ring-indigo-50 transition-all border-2 border-transparent focus:border-indigo-100 font-bold" 
-            placeholder="Search transactions..." 
+            type="text" value={account} onChange={(e) => setAccount(e.target.value)}
+            className="w-full p-5 bg-slate-50 border-2 border-slate-200 rounded-2xl outline-none focus:border-indigo-600 focus:bg-white transition-all font-bold text-slate-900" 
+            placeholder="Enter 12-digit number" required
           />
         </div>
-        <div className="flex items-center gap-4">
-          <div className="text-right hidden sm:block">
-            <p className="text-slate-900 font-black leading-none">Alex Rivera</p>
-            <p className="text-indigo-600 font-black text-[10px] uppercase tracking-widest mt-1">Active Session</p>
-          </div>
-          <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center font-black text-white shadow-xl hover:scale-105 transition-transform cursor-pointer">AR</div>
+        <div className="space-y-3">
+          <label className="text-sm font-black text-slate-900 uppercase tracking-wider ml-1">Amount ($)</label>
+          <input 
+            type="number" value={amount} onChange={(e) => setAmount(e.target.value)}
+            className="w-full p-5 bg-slate-100 border-2 border-slate-200 rounded-2xl outline-none focus:border-indigo-600 focus:bg-white text-3xl font-black text-indigo-700 transition-all" 
+            placeholder="0.00" required
+          />
         </div>
-      </div>
-    </header>
+        <button type="submit" className="w-full bg-indigo-600 text-white py-5 rounded-2xl font-black text-xl hover:bg-indigo-700 shadow-xl transition-all active:scale-95">
+          Send Funds Instantly
+        </button>
+      </form>
+    </div>
   );
 }
