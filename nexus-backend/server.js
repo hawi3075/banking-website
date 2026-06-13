@@ -16,7 +16,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 // --- ROUTES ---
 
-// Registration
+
 app.post('/api/register', async (req, res) => {
   const { fullName, email, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
